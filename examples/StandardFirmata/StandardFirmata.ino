@@ -303,6 +303,7 @@ void reportAnalogCallback(byte analogPin, int value)
       analogInputsToReport = analogInputsToReport &~ (1 << analogPin);
     } else {
       analogInputsToReport = analogInputsToReport | (1 << analogPin);
+      Firmata.sendAnalog(analogPin, analogRead(analogPin));
     }
   }
   // TODO: save status to EEPROM here, if changed
@@ -312,6 +313,7 @@ void reportDigitalCallback(byte port, int value)
 {
   if (port < TOTAL_PORTS) {
     reportPINs[port] = (byte)value;
+    if (value) outputPort(port, readPort(port, portConfigInputs[0]), true);
   }
   // do not disable analog reporting on these 8 pins, to allow some
   // pins used for digital, others analog.  Instead, allow both types
